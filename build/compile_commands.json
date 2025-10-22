@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/Users/charrlie/Desktop/Radikant-JSON-C/build",
+  "command": "/usr/bin/clang -DRadikant_Json_EXPORTS -I/Users/charrlie/Desktop/Radikant-JSON-C/include -g -std=c11 -arch arm64 -fPIC -o CMakeFiles/Radikant-Json.dir/SRC/rjson.c.o -c /Users/charrlie/Desktop/Radikant-JSON-C/SRC/rjson.c",
+  "file": "/Users/charrlie/Desktop/Radikant-JSON-C/SRC/rjson.c",
+  "output": "CMakeFiles/Radikant-Json.dir/SRC/rjson.c.o"
+},
+{
+  "directory": "/Users/charrlie/Desktop/Radikant-JSON-C/build",
+  "command": "/usr/bin/clang -I/Users/charrlie/Desktop/Radikant-JSON-C/include -g -std=c11 -arch arm64 -fPIE -o CMakeFiles/test_json.dir/test/test_json.c.o -c /Users/charrlie/Desktop/Radikant-JSON-C/test/test_json.c",
+  "file": "/Users/charrlie/Desktop/Radikant-JSON-C/test/test_json.c",
+  "output": "CMakeFiles/test_json.dir/test/test_json.c.o"
+}
+]

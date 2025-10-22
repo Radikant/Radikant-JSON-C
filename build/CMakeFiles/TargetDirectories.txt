@@ -1,0 +1,4 @@
+/Users/charrlie/Desktop/Radikant-JSON-C/build/CMakeFiles/Radikant-Json.dir
+/Users/charrlie/Desktop/Radikant-JSON-C/build/CMakeFiles/test_json.dir
+/Users/charrlie/Desktop/Radikant-JSON-C/build/CMakeFiles/edit_cache.dir
+/Users/charrlie/Desktop/Radikant-JSON-C/build/CMakeFiles/rebuild_cache.dir

@@ -4,6 +4,13 @@
 It’s designed to be easy to integrate into C projects that need to handle JSON data without the overhead of larger libraries.  
 The parser builds a tree structure in memory, allowing for easy traversal and data access.
 
+## 📦 Get
+
+Clone the repository including submodules:
+```bash
+git clone --recurse-submodules https://github.com/Radikant/Radikant-JSON-C
+```
+
 ---
 
 ## 🚀 Features

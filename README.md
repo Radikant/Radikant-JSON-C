@@ -1,5 +1,7 @@
 # Radikant-JSON-C
 
+fastest
+
 **Radikant-JSON-C** is a simple, lightweight, and dependency-free JSON parser written in C.  
 It’s designed to be easy to integrate into C projects that need to handle JSON data without the overhead of larger libraries.  
 The parser builds a tree structure in memory, allowing for easy traversal and data access.

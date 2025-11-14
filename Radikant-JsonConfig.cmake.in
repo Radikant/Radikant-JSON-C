@@ -1,5 +1,8 @@
-# Radikant-JsonConfig.cmake.in
-
 @PACKAGE_INIT@
 
+# This finds the targets file (RadikantJsonTargets.cmake)
+# from the same directory this file is in.
 include("${CMAKE_CURRENT_LIST_DIR}/RadikantJsonTargets.cmake")
+
+# This is a helper macro to check that the target exists
+check_required_components(Radikant-Json)

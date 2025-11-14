@@ -46,3 +46,22 @@ add_executable(test_json test/test_json.c)
 # It's crucial for allowing test_json to use the functions from the library
 # and to find the header files like "rjson.h".
 target_link_libraries(test_json PRIVATE Radikant-Json)
+
+# Install the library
+install(TARGETS Radikant-Json
+    EXPORT RadikantJsonTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+    INCLUDES DESTINATION include
+)
+
+# Install the headers
+install(DIRECTORY include/ DESTINATION include)
+
+# Export the targets for find_package()
+install(EXPORT RadikantJsonTargets
+    FILE RadikantJsonTargets.cmake
+    NAMESPACE RadikantJson::
+    DESTINATION lib/cmake/Radikant-Json
+)

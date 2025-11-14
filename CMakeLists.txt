@@ -47,21 +47,59 @@ add_executable(test_json test/test_json.c)
 # and to find the header files like "rjson.h".
 target_link_libraries(test_json PRIVATE Radikant-Json)
 
-# Install the library
+# ---------------------------------------------------------------
+# Installation
+# ---------------------------------------------------------------
+
+set(INCLUDES_DESTINATION include)
+
+# Install the library target
 install(TARGETS Radikant-Json
     EXPORT RadikantJsonTargets
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
     RUNTIME DESTINATION bin
-    INCLUDES DESTINATION include
+    # Note: The INCLUDES DESTINATION here is for the target properties,
+    # it does not set the variable.
+    INCLUDES DESTINATION ${INCLUDES_DESTINATION}
 )
 
 # Install the headers
-install(DIRECTORY include/ DESTINATION include)
+# (Updated to use the variable for consistency)
+install(DIRECTORY include/ DESTINATION ${INCLUDES_DESTINATION})
 
-# Export the targets for find_package()
+# Install the exported targets file (generates RadikantJsonTargets.cmake)
 install(EXPORT RadikantJsonTargets
     FILE RadikantJsonTargets.cmake
     NAMESPACE RadikantJson::
     DESTINATION lib/cmake/Radikant-Json
+)
+
+# --- This is the configuration block ---
+
+# Bring in the helper tools
+include(CMakePackageConfigHelpers)
+
+# Generate the version file (Radikant-JsonConfigVersion.cmake)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
+
+# Generate the main config file (Radikant-JsonConfig.cmake)
+configure_package_config_file(
+    "Radikant-JsonConfig.cmake.in" # The template
+    "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfig.cmake"
+    INSTALL_DESTINATION "lib/cmake/Radikant-Json"
+    # This line will now work because the INCLUDES_DESTINATION variable exists
+    PATH_VARS INCLUDES_DESTINATION
+)
+
+# Install the two generated config files
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfigVersion.cmake"
+    DESTINATION "lib/cmake/Radikant-Json"
 )

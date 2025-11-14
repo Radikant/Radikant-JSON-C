@@ -86,6 +86,13 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   endif()
 endif()
 
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/cmake/Radikant-Json" TYPE FILE FILES
+    "/Users/charrlie/Desktop/Radikant-JSON-C/build/Radikant-JsonConfig.cmake"
+    "/Users/charrlie/Desktop/Radikant-JSON-C/build/Radikant-JsonConfigVersion.cmake"
+    )
+endif()
+
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)

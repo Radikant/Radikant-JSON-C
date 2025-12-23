@@ -1,7 +1,0 @@
-# ninja log v6
-0	77	1763141979467974743	CMakeFiles/Radikant-Json.dir/SRC/rjson.c.o	93bc43e0ddb8ea0f
-130	140	1763141979598130928	libRadikant-Json.1.dylib	92425cb7af8ddae7
-1	57	1763141979468323865	CMakeFiles/test_json.dir/test/test_json.c.o	313e22ae324247f
-77	130	1763141979545092621	libRadikant-Json.0.1.0.dylib	c271c0d00ec227c8
-130	140	1763141979598130928	libRadikant-Json.dylib	92425cb7af8ddae7
-140	191	1763141979607781048	test_json	44a9724612df4c68

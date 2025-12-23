@@ -1,1 +1,10 @@
+# Ignore build artifacts
+
+# Build artifacts (root only)
 build
+
+# macOS metadata (anywhere)
+.DS_Store
+
+# VS Code settings (root only)
+.vscode

@@ -1,21 +1,10 @@
-/*
- * rjson.c - A "rock solid" minimal JSON parser and serializer in C.
- *
- * This implementation is designed to be small, safe, and portable.
- * - Parses and serializes a JSON structure.
- * - Handles string escaping (e.g., \", \n) correctly.
- * - Uses a locale-independent number parser (safe from strtod/snprintf locale bugs).
- * - Implements robust memory handling for object/array additions.
- * - Does not log to stderr, as a library should not.
- */
-
 #include "rjson.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <errno.h> // For strtod/strtoll error checking
-#include <math.h>  // For isfinite()
+#include <errno.h>
+#include <math.h>  
 
 #define RJSON_MAX_DEPTH 512
 

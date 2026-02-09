@@ -33,12 +33,6 @@ target_include_directories(Radikant-Json PUBLIC
 )
 
 # ---------------------------------------------------------------
-# Test executable
-# ---------------------------------------------------------------
-add_executable(test_json test/test_json.c)
-target_link_libraries(test_json PRIVATE Radikant-Json)
-
-# ---------------------------------------------------------------
 # Installation
 # ---------------------------------------------------------------
 
@@ -93,3 +87,10 @@ install(
         "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfigVersion.cmake"
     DESTINATION "lib/cmake/Radikant-Json"
 )
+
+if(NOT PROJECT_IS_TOP_LEVEL)
+    return() 
+endif()
+
+#enable_testing()
+add_subdirectory(test)

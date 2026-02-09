@@ -5,6 +5,7 @@
 
 // --- Type Definitions ---
 
+// RFC 8259
 typedef enum {
     RJSON_NULL,
     RJSON_BOOL,

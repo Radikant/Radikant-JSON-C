@@ -25,16 +25,27 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_link_options("-fsanitize=address,undefined")
 endif()
 
+# ---- Profile Guided Optimization (PGO) ----
+option(RADIKANT_JSON_PGO_GENERATE "Build with PGO instrumentation" OFF)
+option(RADIKANT_JSON_PGO_USE "Build using PGO profile data" OFF)
+
+if(RADIKANT_JSON_PGO_GENERATE)
+    add_compile_options("-fprofile-generate")
+    add_link_options("-fprofile-generate")
+elseif(RADIKANT_JSON_PGO_USE)
+    add_compile_options("-fprofile-use=${CMAKE_SOURCE_DIR}/default.profdata")
+    add_link_options("-fprofile-use=${CMAKE_SOURCE_DIR}/default.profdata")
+endif()
+
 # ---- Build shared library ----
 add_library(Radikant-Json-C SHARED
     SRC/rjson.c
     SRC/error.c
-    SRC/parse.c
+    SRC/decode.c
     SRC/stream.c
     SRC/zone.c
     SRC/object.c
-    SRC/serialize.c
-    SRC/builder.c
+    SRC/encode.c
 )
 
 # ---- Includess ----

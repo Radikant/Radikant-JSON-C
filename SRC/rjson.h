@@ -7,10 +7,25 @@ extern "C" {
 
 #include "types.h"
 #include "error.h"
-#include "builder.h"
 #include "object.h"
 #include "zone.h"
 #include <stddef.h>
+#include <stdint.h>
+
+#define RJSON_TYPE_MASK 0x07ULL
+#define RJSON_LEN_SHIFT 3
+
+static inline rjson_type rjson_get_type(const rjson_value* val) {
+    return (rjson_type)(val->tag & RJSON_TYPE_MASK);
+}
+
+static inline size_t rjson_get_len(const rjson_value* val) {
+    return (size_t)(val->tag >> RJSON_LEN_SHIFT);
+}
+
+static inline void rjson_set_tag(rjson_value* val, rjson_type type, size_t len) {
+    val->tag = (uint64_t)type | ((uint64_t)len << RJSON_LEN_SHIFT);
+}
 
 // A Document owns the parsed JSON AST and its underlying memory arena
 typedef struct {
@@ -25,7 +40,7 @@ typedef struct {
  * @param json_string The JSON string to parse.
  * @return An rjson_doc. Check doc.error == RJSON_OK to ensure success.
  */
-rjson_doc rjson_parse(const char* json_string);
+rjson_doc rjson_decode(const char* json_string);
 
 /**
  * @brief Parses a JSON string of a specific length into a document.
@@ -34,7 +49,7 @@ rjson_doc rjson_parse(const char* json_string);
  * @param length The length of the string.
  * @return An rjson_doc. Check doc.error == RJSON_OK to ensure success.
  */
-rjson_doc rjson_parse_with_length(const char* json_string, size_t length);
+rjson_doc rjson_decode_with_length(const char* json_string, size_t length);
 
 /**
  * @brief Serializes a tree of rjson_value nodes into a compact JSON string.
@@ -44,7 +59,7 @@ rjson_doc rjson_parse_with_length(const char* json_string, size_t length);
  * @param out_len Pointer to store the length (optional).
  * @return 0 on success, -1 on failure.
  */
-int rjson_serialize(const rjson_value* value, char** out_string, size_t* out_len);
+int rjson_encode(const rjson_value* value, char** out_string, size_t* out_len);
 
 /**
  * @brief Frees the entire JSON document (destroys the zone).

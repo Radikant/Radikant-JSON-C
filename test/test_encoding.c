@@ -37,7 +37,7 @@ bool encode_test_1(test_result_t *test) {
     char* out_str = NULL;
     size_t out_len = 0;
     
-    if (rjson_serialize(root, &out_str, &out_len) != 0) {
+    if (rjson_encode(root, &out_str, &out_len) != 0) {
         append_error(test, "Failed to serialize JSON", 0);
     } else if (out_str == NULL) {
         append_error(test, "Serialized string is NULL", 0);
@@ -63,7 +63,7 @@ bool encode_test_2(test_result_t *test) {
     
     char* out_str = NULL;
     
-    if (rjson_serialize(root, &out_str, NULL) != 0) {
+    if (rjson_encode(root, &out_str, NULL) != 0) {
         append_error(test, "Failed to serialize nested JSON", 0);
     } else {
         printf("  [DEBUG] Serialized nested: %s\n", out_str);

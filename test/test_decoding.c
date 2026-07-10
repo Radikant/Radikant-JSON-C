@@ -132,12 +132,12 @@ bool decode_test_2(test_result_t *test) {
     }
 
     rjson_value* name_val = rjson_object_get_value(parsed_json, "name");
-    if (!name_val || name_val->type != RJSON_STRING || name_val->as.str_val.len != 15 || strncmp(name_val->as.str_val.ptr, "Radikant-JSON-C", 15) != 0) {
+    if (!name_val || rjson_get_type(name_val) != RJSON_STRING || rjson_get_len(name_val) != 15 || strncmp(name_val->as.str_val, "Radikant-JSON-C", 15) != 0) {
         append_error(test, "Incorrect value for 'name'", 0);
     }
 
     rjson_value* version_val = rjson_object_get_value(parsed_json, "version");
-    if (!version_val || version_val->type != RJSON_NUMBER || version_val->as.num_val != 1.0) {
+    if (!version_val || rjson_get_type(version_val) != RJSON_NUMBER || version_val->as.num_val != 1.0) {
         append_error(test, "Incorrect value for 'version'", 0);
     }
 
@@ -172,9 +172,9 @@ bool decode_edge_2(test_result_t *test) {
         rjson_value *val = rjson_parse(json);
         if (!(val != NULL)) { append_error(test, "Should parse surrogate pair escape sequence", 0); }
 
-        if (val && val->type == RJSON_STRING)
+        if (val && rjson_get_type(val) == RJSON_STRING)
         {
-            unsigned char *bytes = (unsigned char *)val->as.str_val.ptr;
+            unsigned char *bytes = (unsigned char *)val->as.str_val;
             // Check for UTF-8 encoding of U+1F600
             int is_correct = (bytes[0] == 0xF0 && bytes[1] == 0x9F &&
                               bytes[2] == 0x98 && bytes[3] == 0x80);
@@ -295,15 +295,15 @@ bool decode_edge_10(test_result_t *test) {
 
 bool decode_edge_11(test_result_t *test) {
         rjson_value* val = rjson_parse("\"hello\"");
-        if (!(val != NULL && val->type == RJSON_STRING)) { append_error(test, "Should parse top-level string", 0); }
+        if (!(val != NULL && rjson_get_type(val) == RJSON_STRING)) { append_error(test, "Should parse top-level string", 0); }
         rjson_free(val);
 
         val = rjson_parse("123");
-        if (!(val != NULL && val->type == RJSON_NUMBER)) { append_error(test, "Should parse top-level number", 0); }
+        if (!(val != NULL && rjson_get_type(val) == RJSON_NUMBER)) { append_error(test, "Should parse top-level number", 0); }
         rjson_free(val);
 
         val = rjson_parse("true");
-        if (!(val != NULL && val->type == RJSON_BOOL)) { append_error(test, "Should parse top-level boolean", 0); }
+        if (!(val != NULL && rjson_get_type(val) == RJSON_BOOL)) { append_error(test, "Should parse top-level boolean", 0); }
         rjson_free(val);
     
     return test_end(test);
@@ -385,7 +385,7 @@ bool decode_edge_16(test_result_t *test) {
 bool decode_edge_17(test_result_t *test) {
         const char* json = "\"\\u0000\"";
         rjson_value* val = rjson_parse(json);
-        if (!(val != NULL && val->type == RJSON_STRING && val->as.str_val.len == 1 && val->as.str_val.ptr[0] == '\0')) { 
+        if (!(val != NULL && rjson_get_type(val) == RJSON_STRING && rjson_get_len(val) == 1 && val->as.str_val[0] == '\0')) { 
             append_error(test, "Should accept \\u0000 since strings have length now", 0); 
         }
         if (val) rjson_free(val);
@@ -414,7 +414,7 @@ bool decode_edge_19(test_result_t *test) {
         if (!(val != NULL)) { append_error(test, "Should accept keywords as object keys", 0); }
         if (val) {
             rjson_value* v = rjson_object_get_value(val, "true");
-            if (!(v != NULL && v->type == RJSON_NUMBER)) { append_error(test, "Should retrieve 'true' key", 0); }
+            if (!(v != NULL && rjson_get_type(v) == RJSON_NUMBER)) { append_error(test, "Should retrieve 'true' key", 0); }
             rjson_free(val);
         }
     
@@ -473,7 +473,7 @@ bool decode_edge_25(test_result_t *test) {
         const char* valid_nums[] = { "-0", "0e0", "0E+1", "0.0", "-0.0", NULL };
         for (int i = 0; valid_nums[i]; i++) {
             rjson_value* val = rjson_parse(valid_nums[i]);
-            if (!(val != NULL && val->type == RJSON_NUMBER)) { append_error(test, "Should accept tricky valid number", 0); }
+            if (!(val != NULL && rjson_get_type(val) == RJSON_NUMBER)) { append_error(test, "Should accept tricky valid number", 0); }
             rjson_free(val);
         }
     
@@ -484,8 +484,8 @@ bool decode_edge_26(test_result_t *test) {
         const char* json = "\"\\/\"";
         rjson_value* val = rjson_parse(json);
         if (!(val != NULL)) { append_error(test, "Should accept escaped forward slash", 0); }
-        if (val && val->type == RJSON_STRING) {
-            if (val->as.str_val.len != 1 || strncmp(val->as.str_val.ptr, "/", 1) != 0) { append_error(test, "Should decode \\/ to /", 0); }
+        if (val && rjson_get_type(val) == RJSON_STRING) {
+            if (rjson_get_len(val) != 1 || strncmp(val->as.str_val, "/", 1) != 0) { append_error(test, "Should decode \\/ to /", 0); }
         }
         rjson_free(val);
     
@@ -497,9 +497,9 @@ bool decode_edge_27(test_result_t *test) {
         const char* json = "\"🔥\""; 
         rjson_value* val = rjson_parse(json);
         if (!(val != NULL)) { append_error(test, "Should accept raw UTF-8 characters in string", 0); }
-        if (val && val->type == RJSON_STRING) {
+        if (val && rjson_get_type(val) == RJSON_STRING) {
             // Check bytes
-            unsigned char* bytes = (unsigned char*)val->as.str_val.ptr;
+            unsigned char* bytes = (unsigned char*)val->as.str_val;
             int is_correct = (bytes[0] == 0xF0 && bytes[1] == 0x9F && 
                               bytes[2] == 0x94 && bytes[3] == 0xA5);
             if (!(is_correct)) { append_error(test, "Should preserve raw UTF-8 bytes", 0); }
@@ -511,11 +511,11 @@ bool decode_edge_27(test_result_t *test) {
 
 bool decode_edge_28(test_result_t *test) {
         rjson_value* val = rjson_parse("[]");
-        if (!(val != NULL && val->type == RJSON_ARRAY && val->as.arr_val.count == 0)) { append_error(test, "Should parse empty array", 0); }
+        if (!(val != NULL && rjson_get_type(val) == RJSON_ARRAY && rjson_get_len(val) == 0)) { append_error(test, "Should parse empty array", 0); }
         rjson_free(val);
 
         val = rjson_parse("{}");
-        if (!(val != NULL && val->type == RJSON_OBJECT && val->as.obj_val.count == 0)) { append_error(test, "Should parse empty object", 0); }
+        if (!(val != NULL && rjson_get_type(val) == RJSON_OBJECT && rjson_get_len(val) == 0)) { append_error(test, "Should parse empty object", 0); }
         rjson_free(val);
     
     return test_end(test);
@@ -553,7 +553,7 @@ bool decode_edge_31(test_result_t *test) {
             rjson_value* val = rjson_parse(large_json);
             if (!(val != NULL)) { append_error(test, "Should parse 1MB string", 0); }
             if (val) {
-                if (!(val->as.str_val.len == size)) { append_error(test, "String length should match", 0); }
+                if (!(rjson_get_len(val) == size)) { append_error(test, "String length should match", 0); }
                 rjson_free(val);
             }
             free(large_json);

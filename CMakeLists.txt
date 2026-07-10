@@ -1,96 +1,67 @@
-cmake_minimum_required(VERSION 3.16)
-project(Radikant-Json VERSION 0.1.0 LANGUAGES C)
+cmake_minimum_required(VERSION 3.20)
+project(Radikant-Json-C VERSION 0.1.0 LANGUAGES C)
 
-# ---------------------------------------------------------------
-# General build settings
-# ---------------------------------------------------------------
+# ---- Include Radikant CMake functions ----
+include("cmake/Radikant.cmake")
+
+# ---- Detect Apple Silicon ----
+detect_apple_silicon()
+
+# ---- Submodules ----
+# add_subdirectory_once(lib/Radikant-Socket-C    Radikant-Socket-C)
+# add_subdirectory_once(lib/Radikant-Log-C       Radikant-Log-C)
+# add_subdirectory_once(lib/Radikant-Probe-C     Radikant-Probe-C)
+
+# ---- Global settings ----
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-# This line was correctly removed to ensure relocatability
-# set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# ---------------------------------------------------------------
-# Library target (Radikant-Json)
-# ---------------------------------------------------------------
-add_library(Radikant-Json SHARED
+# ---- Sanitizers for Debug Builds ----
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    add_compile_options("-fsanitize=address,undefined" "-fno-omit-frame-pointer" "-g")
+    add_link_options("-fsanitize=address,undefined")
+endif()
+
+# ---- Build shared library ----
+add_library(Radikant-Json-C SHARED
     SRC/rjson.c
 )
 
-set_target_properties(Radikant-Json PROPERTIES
-    OUTPUT_NAME "Radikant-Json"
+# ---- Includess ----
+target_include_directories(Radikant-Json-C
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SRC>
+        $<INSTALL_INTERFACE:include>
+)
+
+# ---- Link dependencies ----
+target_link_libraries(Radikant-Json-C
+    PUBLIC
+
+    PRIVATE
+
+)
+
+# ---- Output settings ----
+set_target_properties(Radikant-Json-C PROPERTIES
+    OUTPUT_NAME "radikant_json_c"
     VERSION ${PROJECT_VERSION}
     SOVERSION 1
 )
 
-target_include_directories(Radikant-Json PUBLIC
-    # For projects building this directly (e.g., tests in this project)
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    
-    # For projects that install and use this library later
-    $<INSTALL_INTERFACE:include>
-)
-
-# ---------------------------------------------------------------
-# Installation
-# ---------------------------------------------------------------
-
-set(INCLUDES_DESTINATION include)
-
-# Install the library target
-install(TARGETS Radikant-Json
-    EXPORT RadikantJsonTargets
-    ARCHIVE DESTINATION lib
-    LIBRARY DESTINATION lib
-    RUNTIME DESTINATION bin
- #   INCLUDES DESTINATION ${INCLUDES_DESTINATION}
-)
-
-# Install the headers
-install(DIRECTORY include/ DESTINATION ${INCLUDES_DESTINATION})
-
-# Install the exported targets file (generates RadikantJsonTargets.cmake)
-install(EXPORT RadikantJsonTargets
-    FILE RadikantJsonTargets.cmake
-    NAMESPACE RadikantJson::
-    DESTINATION lib/cmake/Radikant-Json
-)
-
-# --- This is the configuration block ---
-
-# Bring in the helper tools
-include(CMakePackageConfigHelpers)
-
-# Generate the version file (Radikant-JsonConfigVersion.cmake)
-write_basic_package_version_file(
-    "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfigVersion.cmake"
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-)
-
-# --- THIS BLOCK IS THE REVISION ---
-# Generate the main config file (Radikant-JsonConfig.cmake)
-# Note the removal of "PATH_VARS".
-# This assumes your .cmake.in file uses @PACKAGE_INIT@.
-configure_package_config_file(
-    "Radikant-JsonConfig.cmake.in" # The template
-    "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfig.cmake"
-    INSTALL_DESTINATION "lib/cmake/Radikant-Json"
-)
-# --- END OF REVISION ---
-
-# Install the two generated config files
-install(
-    FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfig.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/Radikant-JsonConfigVersion.cmake"
-    DESTINATION "lib/cmake/Radikant-Json"
-)
 
 if(NOT PROJECT_IS_TOP_LEVEL)
     return() 
 endif()
 
-#enable_testing()
+add_subdirectory_once(lib/Radikant-Probe-C Radikant-Probe-C)
+add_subdirectory_once(lib/yyjson yyjson)
+
+
+enable_testing()
 add_subdirectory(test)
+add_subdirectory(example)

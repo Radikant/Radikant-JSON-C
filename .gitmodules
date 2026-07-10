@@ -1,0 +1,8 @@
+[submodule "lib/Radikant-Probe-C"]
+	path = lib/Radikant-Probe-C
+	url = https://github.com/Radikant/Radikant-Probe-C.git
+	branch = main
+[submodule "lib/yyjson"]
+	path = lib/yyjson
+	url = https://github.com/ibireme/yyjson.git
+	branch = master

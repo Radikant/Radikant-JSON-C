@@ -1,5 +1,6 @@
 #include "probe.h"
-#include "rjson.h"
+#include "rjson_compat.h"
+#include "rjson_compat.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

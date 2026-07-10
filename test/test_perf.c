@@ -1,5 +1,6 @@
 #include "perf.h"
-#include "rjson.h"
+#include "rjson_compat.h"
+#include "rjson_compat.h"
 #include "yyjson.h"
 #include <stdio.h>
 #include <string.h>

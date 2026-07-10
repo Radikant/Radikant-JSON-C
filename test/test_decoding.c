@@ -1,5 +1,6 @@
 #include "probe.h"
-#include "rjson.h"
+#include "rjson_compat.h"
+#include "rjson_compat.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -7,6 +8,7 @@
 
 // Radikant
 #include <radikant-json.h>
+#include "rjson_compat.h"
 #include <radikant-probe-c.h>
 
 bool decode_test_1(test_result_t *test);
@@ -130,7 +132,7 @@ bool decode_test_2(test_result_t *test) {
     }
 
     rjson_value* name_val = rjson_object_get_value(parsed_json, "name");
-    if (!name_val || name_val->type != RJSON_STRING || strcmp(name_val->as.str_val, "Radikant-JSON-C") != 0) {
+    if (!name_val || name_val->type != RJSON_STRING || name_val->as.str_val.len != 15 || strncmp(name_val->as.str_val.ptr, "Radikant-JSON-C", 15) != 0) {
         append_error(test, "Incorrect value for 'name'", 0);
     }
 
@@ -172,7 +174,7 @@ bool decode_edge_2(test_result_t *test) {
 
         if (val && val->type == RJSON_STRING)
         {
-            unsigned char *bytes = (unsigned char *)val->as.str_val;
+            unsigned char *bytes = (unsigned char *)val->as.str_val.ptr;
             // Check for UTF-8 encoding of U+1F600
             int is_correct = (bytes[0] == 0xF0 && bytes[1] == 0x9F &&
                               bytes[2] == 0x98 && bytes[3] == 0x80);
@@ -383,7 +385,9 @@ bool decode_edge_16(test_result_t *test) {
 bool decode_edge_17(test_result_t *test) {
         const char* json = "\"\\u0000\"";
         rjson_value* val = rjson_parse(json);
-        if (val != NULL) { append_error(test, "Should reject \\u0000 (unsafe for C-strings)", 0); }
+        if (!(val != NULL && val->type == RJSON_STRING && val->as.str_val.len == 1 && val->as.str_val.ptr[0] == '\0')) { 
+            append_error(test, "Should accept \\u0000 since strings have length now", 0); 
+        }
         if (val) rjson_free(val);
     
     return test_end(test);
@@ -481,7 +485,7 @@ bool decode_edge_26(test_result_t *test) {
         rjson_value* val = rjson_parse(json);
         if (!(val != NULL)) { append_error(test, "Should accept escaped forward slash", 0); }
         if (val && val->type == RJSON_STRING) {
-            if (!(strcmp(val->as.str_val, "/") == 0)) { append_error(test, "Should decode \\/ to /", 0); }
+            if (val->as.str_val.len != 1 || strncmp(val->as.str_val.ptr, "/", 1) != 0) { append_error(test, "Should decode \\/ to /", 0); }
         }
         rjson_free(val);
     
@@ -495,7 +499,7 @@ bool decode_edge_27(test_result_t *test) {
         if (!(val != NULL)) { append_error(test, "Should accept raw UTF-8 characters in string", 0); }
         if (val && val->type == RJSON_STRING) {
             // Check bytes
-            unsigned char* bytes = (unsigned char*)val->as.str_val;
+            unsigned char* bytes = (unsigned char*)val->as.str_val.ptr;
             int is_correct = (bytes[0] == 0xF0 && bytes[1] == 0x9F && 
                               bytes[2] == 0x94 && bytes[3] == 0xA5);
             if (!(is_correct)) { append_error(test, "Should preserve raw UTF-8 bytes", 0); }
@@ -549,7 +553,7 @@ bool decode_edge_31(test_result_t *test) {
             rjson_value* val = rjson_parse(large_json);
             if (!(val != NULL)) { append_error(test, "Should parse 1MB string", 0); }
             if (val) {
-                if (!(strlen(val->as.str_val) == size)) { append_error(test, "String length should match", 0); }
+                if (!(val->as.str_val.len == size)) { append_error(test, "String length should match", 0); }
                 rjson_free(val);
             }
             free(large_json);

@@ -28,6 +28,13 @@ endif()
 # ---- Build shared library ----
 add_library(Radikant-Json-C SHARED
     SRC/rjson.c
+    SRC/error.c
+    SRC/parse.c
+    SRC/stream.c
+    SRC/zone.c
+    SRC/object.c
+    SRC/serialize.c
+    SRC/builder.c
 )
 
 # ---- Includess ----

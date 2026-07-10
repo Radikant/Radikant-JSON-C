@@ -5,6 +5,7 @@
 
 // Radikant
 #include <radikant-json.h>
+#include "rjson_compat.h"
 #include <radikant-probe-c.h>
 
 bool encode_test_1(test_result_t *test);

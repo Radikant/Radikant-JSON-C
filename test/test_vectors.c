@@ -43,15 +43,17 @@ static void test_directory(test_result_t *test, const char *dir_path, test_mode_
             fclose(f);
             content[fsize] = 0;
             
-            rjson_value *v = rjson_parse(content);
+            rjson_value *v = rjson_parse_with_length(content, fsize);
             if (mode == EXPECT_PASS && v == NULL) {
                 char err[1024];
                 snprintf(err, sizeof(err), "Expected parse success for %s", path);
                 append_error(test, err, 0);
+                printf("FAIL (Expected Pass, got NULL): %s\n", path);
             } else if (mode == EXPECT_FAIL && v != NULL) {
                 char err[1024];
                 snprintf(err, sizeof(err), "Expected parse failure for %s", path);
                 append_error(test, err, 0);
+                printf("FAIL (Expected Fail, got Parse Success): %s\n", path);
             }
             
             if (v) rjson_free(v);

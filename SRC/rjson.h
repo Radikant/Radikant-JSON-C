@@ -50,6 +50,15 @@ typedef struct rjson_value {
 rjson_value* rjson_parse(const char* json_string);
 
 /**
+ * @brief Parses a JSON string of a specific length into a tree of rjson_value nodes.
+ *
+ * @param json_string The JSON string to parse.
+ * @param length The length of the string in bytes.
+ * @return A pointer to the root rjson_value, or NULL on failure.
+ */
+rjson_value* rjson_parse_with_length(const char* json_string, size_t length);
+
+/**
  * @brief Serializes a tree of rjson_value nodes into a compact JSON string.
  *
  * @param value The root rjson_value to serialize.

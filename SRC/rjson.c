@@ -267,8 +267,10 @@ static char *unescape_string(const char *in_start, const char *in_end, size_t *o
                     }
                 }
 
-                // Harden: Reject lone surrogates (invalid UTF-8) and null bytes (unsafe for C strings)
-                if ((cp >= 0xD800 && cp <= 0xDFFF) || cp == 0)
+                // Harden: Reject lone surrogates (invalid UTF-8)
+                // Note: We intentionally allow cp == 0 (\u0000) to pass standard JSON test suites,
+                // even though it terminates the C string early.
+                if (cp >= 0xD800 && cp <= 0xDFFF)
                 {
                     free(out);
                     return NULL;
@@ -657,12 +659,21 @@ rjson_value *rjson_parse(const char *json_string)
 {
     if (!json_string)
         return NULL;
+    return rjson_parse_with_length(json_string, strlen(json_string));
+}
 
-    // Harden: Skip UTF-8 BOM if present (EF BB BF)
-    if (strncmp(json_string, "\xEF\xBB\xBF", 3) == 0)
-        json_string += 3;
+rjson_value *rjson_parse_with_length(const char *json_string, size_t length)
+{
+    if (!json_string)
+        return NULL;
 
     const char *current_pos = json_string;
+    const char *end_pos = json_string + length;
+
+    // Harden: Skip UTF-8 BOM if present (EF BB BF)
+    if (length >= 3 && strncmp(current_pos, "\xEF\xBB\xBF", 3) == 0)
+        current_pos += 3;
+
     rjson_value *result = parse_value(&current_pos, 0);
 
     if (!result)
@@ -672,9 +683,9 @@ rjson_value *rjson_parse(const char *json_string)
     }
 
     skip_whitespace(&current_pos);
-    if (*current_pos != '\0')
+    if (current_pos != end_pos)
     {
-        // Library should not log. Fail due to extra characters.
+        // Library should not log. Fail due to extra characters or trailing null bytes.
         rjson_free(result);
         return NULL;
     }

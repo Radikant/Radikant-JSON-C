@@ -75,6 +75,7 @@ typedef struct {
 
 int rjson_out_stream_init(rjson_out_stream* stream, size_t initial_capacity);
 int rjson_out_stream_append(rjson_out_stream* stream, const char* data, size_t len);
+int rjson_out_stream_finish(rjson_out_stream* stream);
 int rjson_out_stream_grow(rjson_out_stream* stream, size_t min_needed);
 void rjson_out_stream_destroy(rjson_out_stream* stream);
 

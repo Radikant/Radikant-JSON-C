@@ -354,7 +354,7 @@ bool decode_edge_14(test_result_t *test) {
 bool decode_edge_15(test_result_t *test) {
         int depth = 600;
         // Construct {"a":{"a": ... }}
-        char* deep_json = (char*)malloc(depth * 6 + 1);
+        char* deep_json = (char*)malloc(depth * 6 + 2);
         if (deep_json) {
             char* p = deep_json;
             for(int i=0; i<depth; i++) {

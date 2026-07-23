@@ -24,10 +24,12 @@ yyjson_mut_doc* g_yyjson_diff = NULL;
 yyjson_mut_doc* g_yyjson_hard = NULL;
 
 static void setup_payloads() {
+    printf("Setting up simple...\n"); fflush(stdout);
     // Build Radikant trees
     g_radikant_simple = rjson_array_new();
     for (int i = 0; i < 10000; i++) rjson_array_add(g_radikant_simple, rjson_number_new(i * 1.5));
     
+    printf("Setting up diff...\n"); fflush(stdout);
     g_radikant_diff = rjson_array_new();
     for (int i = 0; i < 1000; i++) {
         rjson_value* obj = rjson_object_new();
@@ -41,6 +43,7 @@ static void setup_payloads() {
         rjson_array_add(g_radikant_diff, obj);
     }
     
+    printf("Setting up hard...\n"); fflush(stdout);
     g_radikant_hard = rjson_array_new();
     for (int i = 0; i < 1000; i++) {
         rjson_value* obj = rjson_object_new();
@@ -59,11 +62,13 @@ static void setup_payloads() {
         rjson_array_add(g_radikant_hard, obj);
     }
 
+    printf("Encoding radikant simple...\n"); fflush(stdout);
     // Generate JSON strings
     rjson_encode(g_radikant_simple, &g_simple_json, &g_simple_size);
     rjson_encode(g_radikant_diff, &g_diff_json, &g_diff_size);
     rjson_encode(g_radikant_hard, &g_hard_json, &g_hard_size);
     
+    printf("Parsing yyjson...\n"); fflush(stdout);
     // Parse strings into YYJSON mutable docs for encoding tests
     yyjson_doc* temp_simple = yyjson_read(g_simple_json, g_simple_size, 0);
     g_yyjson_simple = yyjson_doc_mut_copy(temp_simple, NULL);
@@ -93,7 +98,10 @@ static void* radikant_decode_wrapper(const char* str, size_t len) {
     return rjson_parse_with_length(str, len);
 }
 static void radikant_free_wrapper(void* p) {
-    rjson_free((rjson_value*)p);
+    (void)p;
+#undef rjson_free
+    rjson_free(&_last_test_doc);
+#define rjson_free rjson_free_compat
 }
 static void* yyjson_decode_wrapper(const char* str, size_t len) {
     return yyjson_read(str, len, 0);

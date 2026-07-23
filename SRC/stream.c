@@ -33,6 +33,14 @@ int rjson_out_stream_append(rjson_out_stream* stream, const char* data, size_t l
     return 0;
 }
 
+int rjson_out_stream_finish(rjson_out_stream* stream) {
+    if (stream->length + 1 > stream->capacity) {
+        if (rjson_out_stream_grow(stream, stream->length + 1) != 0) return -1;
+    }
+    stream->buffer[stream->length] = '\0';
+    return 0;
+}
+
 void rjson_out_stream_destroy(rjson_out_stream* stream) {
     free(stream->buffer);
     stream->buffer = NULL;

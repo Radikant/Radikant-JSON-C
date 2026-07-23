@@ -56,7 +56,7 @@ int rjson_encode(const rjson_value* value, char** out_string, size_t* out_len) {
     if (rjson_out_stream_init(&stream, 4096) != 0) return -1;
     
     rjson_error_t err = rjson_encode_stream(&stream, value);
-    if (err != RJSON_OK) {
+    if (err != RJSON_OK || rjson_out_stream_finish(&stream) != 0) {
         rjson_out_stream_destroy(&stream);
         return -1;
     }

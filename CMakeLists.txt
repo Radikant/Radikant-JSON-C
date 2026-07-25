@@ -3,6 +3,7 @@ project(Radikant-Json-C VERSION 0.1.0 LANGUAGES C)
 
 # ---- Include Radikant CMake functions ----
 include("cmake/Radikant.cmake")
+include("cmake/Sanitize.cmake")
 
 # ---- Detect Apple Silicon ----
 detect_apple_silicon()
@@ -21,10 +22,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # ---- Sanitizers for Debug Builds ----
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    add_compile_options("-fsanitize=address,undefined" "-fno-omit-frame-pointer" "-g")
-    add_link_options("-fsanitize=address,undefined")
-endif()
+radikant_debug_sanitize()
 
 # ---- Profile Guided Optimization (PGO) ----
 option(RADIKANT_JSON_PGO_GENERATE "Build with PGO instrumentation" OFF)
